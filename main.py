@@ -11,7 +11,13 @@ app = Flask(__name__)
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    data = request.json
+   if not request.is_json:
+    return jsonify({"error": "Request must be JSON"}), 400
+
+try:
+    data = request.get_json(force=True)
+except Exception as e:
+    return jsonify({"error": f"Invalid JSON: {str(e)}"}), 400
     log_event(f"📡 SIGNAL RECEIVED: {data}")
 
     missing = validate_payload(data)
