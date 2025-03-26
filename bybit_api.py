@@ -58,9 +58,10 @@ def place_order(symbol, side, qty, sl=None, tp=None):
     endpoint = "/v5/order/create"
     url = BASE_URL + endpoint
 
+    # Cambiar symbol a DOGEUSDT
     body = {
         "category": "linear",               # ← para contratos USDT Perpetuos
-        "symbol": symbol,                  # ← ej. BTCUSDT
+        "symbol": symbol,                  # ← DOGEUSDT
         "side": side.upper(),              # ← "BUY" o "SELL" en mayúsculas
         "orderType": "Market",
         "qty": str(qty),
@@ -73,17 +74,16 @@ def place_order(symbol, side, qty, sl=None, tp=None):
     if sl is not None:
         body["stopLoss"] = str(sl)
 
-    # Convertir cuerpo a JSON string y preparar headers
     body_str = json.dumps(body, separators=(',', ':'))
     headers = _get_headers(body_str=body_str)
 
-    # Logs antes de enviar
+    # Log del cuerpo de la orden
     print("📤 Enviando orden a Bybit:")
     print(json.dumps(body, indent=2))
 
     response = requests.post(url, headers=headers, data=body_str)
 
-    # Logs de la respuesta
+    # Log de la respuesta
     print(f"📥 Código de respuesta: {response.status_code}")
     print("🧾 Respuesta cruda:", response.text)
 
@@ -95,5 +95,3 @@ def place_order(symbol, side, qty, sl=None, tp=None):
             "error": "Respuesta no válida de Bybit",
             "raw": response.text
         }
-
-    
