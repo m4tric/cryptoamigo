@@ -11,13 +11,30 @@ app = Flask(__name__)
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    log_event("📥 Incoming request")
+
     if not request.is_json:
+        log_event("⚠️ Request is not JSON")
         return jsonify({"error": "Request must be JSON"}), 400
 
     try:
+        raw_data = request.data.decode("utf-8")
+        log_event(f"📦 Raw body: {raw_data}")
         data = request.get_json(force=True)
+        log_event(f"✅ Parsed JSON: {data}")
     except Exception as e:
+        log_event(f"❌ JSON parsing error: {str(e)}")
         return jsonify({"error": f"Invalid JSON: {str(e)}"}), 400
+
+    log_event(f"🖱️ SIGNAL RECEIVED: {data}")
+
+    missing = validate_payload(data)
+    if missing:
+        return jsonify({"error": f"Missing fields: {', '.join(missing)}"}), 400
+
+    # Aquí seguiría la lógica del bot: cálculo de qty, envío de orden, etc.
+    # Por ahora solo confirmamos recepción:
+    return jsonify({"status": "Webhook received"}), 200
 
     log_event(f"📡 SIGNAL RECEIVED: {data}")
 
