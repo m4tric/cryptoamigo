@@ -49,4 +49,4 @@ def webhook():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5050))
     log_event("🚀 BOT STARTED (Risk Managed Version)")
-    app.run(host="127.0.0.1", port=port)
+    app.run(host="0.0.0.0", port=port)
