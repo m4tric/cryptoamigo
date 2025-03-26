@@ -1,13 +1,21 @@
+import os
+import sys
 import time
 import hmac
 import hashlib
 import json
-import os
 import requests
 from utils import log_event
 
+# Leer claves API
 API_KEY = os.getenv("BYBIT_API_KEY")
 API_SECRET = os.getenv("BYBIT_API_SECRET")
+
+# Validar claves
+if not API_KEY or not API_SECRET:
+    log_event("❌ ERROR: API_KEY o API_SECRET no están definidas en las variables de entorno.")
+    sys.exit("Faltan las claves API. Verifica tus variables en Render.")
+
 BASE_URL = "https://api.bybit.com"
 
 def _get_headers(query_string="", body_str=""):
