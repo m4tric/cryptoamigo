@@ -1,12 +1,23 @@
 import json
+import os
+import traceback
 from utils import log_event
 
 CONFIG_FILE = "config.json"
 STATE_FILE = "state.json"
 
 def load_config():
-    with open(CONFIG_FILE, "r") as f:
-        return json.load(f)
+    try:
+        print(f"🗂 Ruta actual: {os.getcwd()}")
+        print(f"📄 Verificando existencia de config.json: {os.path.isfile(CONFIG_FILE)}")
+        with open(CONFIG_FILE, "r") as f:
+            config = json.load(f)
+        print(f"✅ Config cargado: {config}")
+        return config
+    except Exception as e:
+        print("❌ Error al cargar config.json:")
+        traceback.print_exc()
+        raise
 
 def load_state():
     try:
@@ -30,7 +41,7 @@ def get_trade_size(symbol, leverage):
     capital = config.get("capital_usdt", 20)
     risk_percent = config.get("risk_percent", 5)
 
-    # Precio estimado temporal mientras no se obtiene el real
+    # Precio estimado temporal para simulación (hasta tener price real)
     price = 100
 
     qty = calculate_qty(entry_price=price, capital=capital, risk_percent=risk_percent, sl_percent=1)
