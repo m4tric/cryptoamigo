@@ -74,6 +74,22 @@ def place_order(symbol, side, qty, sl=None, tp=None):
 
     body_str = json.dumps(body, separators=(',', ':'))
     headers = _get_headers(body_str=body_str)
+
+    print("📤 Enviando orden a Bybit:")
+    print(json.dumps(body, indent=2))
+
     response = requests.post(url, headers=headers, data=body_str)
-    log_event(f"📈 ORDER RESPONSE: {response.text}")
-    return response.json()
+
+    print(f"📥 Código de respuesta: {response.status_code}")
+    print("🧾 Respuesta cruda:", response.text)
+
+    try:
+        return response.json()
+    except ValueError:
+        print("❌ Error al parsear respuesta JSON de Bybit.")
+        return {
+            "error": "Respuesta no válida de Bybit",
+            "raw": response.text
+        }
+
+    
