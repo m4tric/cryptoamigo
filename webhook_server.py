@@ -8,19 +8,38 @@ load_dotenv()
 app = Flask(__name__)
 
 SECRET_TOKEN = os.getenv("WEBHOOK_SECRET", "supersecreto")
+DEFAULT_SYMBOL = "BTCUSDT"
+DEFAULT_LEVERAGE = 3
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    data = request.json
+    data = {}
+    try:
+        # Intentar interpretar como JSON
+        data = request.get_json(force=True)
+        token = data.get("token")
 
-    token = data.get("token")
-    if token != SECRET_TOKEN:
-        return jsonify({"error": "Token inválido"}), 403
+        if token != SECRET_TOKEN:
+            return jsonify({"error": "Token inválido"}), 403
 
-    symbol = data.get("symbol", "BTCUSDT")
-    side = data.get("side", "buy")
-    leverage = data.get("leverage", 3)
+        symbol = data.get("symbol", DEFAULT_SYMBOL)
+        side = data.get("side", "buy")
+        leverage = data.get("leverage", DEFAULT_LEVERAGE)
 
+    except Exception:
+        # Si no es JSON válido, interpretar como texto plano
+        raw = request.data.decode("utf-8").strip().lower()
+        if raw not in ["long", "short"]:
+            return jsonify({"error": "Formato de mensaje no válido"}), 400
+
+        # Log simplificado
+        print(f"[Webhook plano recibido]: {raw}")
+
+        symbol = DEFAULT_SYMBOL
+        side = "buy" if raw == "long" else "sell"
+        leverage = DEFAULT_LEVERAGE
+
+    # Validar si se puede tradear
     if not can_trade():
         return jsonify({"error": "Límite de trading alcanzado"}), 403
 
