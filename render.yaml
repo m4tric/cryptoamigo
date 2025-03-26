@@ -3,5 +3,5 @@ services:
     name: scalping-bot
     env: python
     buildCommand: ""
-    startCommand: "python main.py"
+    startCommand: "python webhook_server.py"
     plan: free
