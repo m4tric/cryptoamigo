@@ -1,6 +1,6 @@
 {
-  "capital_usdt": 500,
-  "risk_percent": 1,
-  "max_daily_loss_usdt": 20,
-  "max_trades_per_day": 10
+  "capital_usdt": 20,
+  "risk_percent": 5,
+  "max_daily_loss_usdt": 5,
+  "max_trades_per_day": 3
 }
