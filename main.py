@@ -11,13 +11,14 @@ app = Flask(__name__)
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-   if not request.is_json:
-    return jsonify({"error": "Request must be JSON"}), 400
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
 
-try:
-    data = request.get_json(force=True)
-except Exception as e:
-    return jsonify({"error": f"Invalid JSON: {str(e)}"}), 400
+    try:
+        data = request.get_json(force=True)
+    except Exception as e:
+        return jsonify({"error": f"Invalid JSON: {str(e)}"}), 400
+
     log_event(f"📡 SIGNAL RECEIVED: {data}")
 
     missing = validate_payload(data)
@@ -34,7 +35,7 @@ except Exception as e:
         sl_percent = 1.0  # Puedes hacerlo variable si lo deseas
         tp = data["tp"]
         sl = data["sl"]
-        entry_price = data.get("entry_price")  # Idealmente viene desde TradingView
+        entry_price = data.get("entry_price")
 
         if not entry_price:
             return jsonify({"error": "Missing entry_price for risk calculation"}), 400
@@ -45,7 +46,7 @@ except Exception as e:
         set_leverage(symbol, leverage)
         result = place_order(symbol, side, qty, sl, tp)
 
-        update_state(profit_loss=0)  # Por ahora asumimos neutral, puedes ajustar según resultados reales
+        update_state(profit_loss=0)
 
         return jsonify(result)
     except Exception as e:
@@ -53,6 +54,6 @@ except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5050))
+    port = int(os.getenv("PORT", 10000))
     log_event("🚀 BOT STARTED (Risk Managed Version)")
     app.run(host="0.0.0.0", port=port)
