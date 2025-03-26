@@ -14,6 +14,11 @@ DEFAULT_LEVERAGE = 3
 @app.route("/webhook", methods=["POST"])
 def webhook():
     try:
+         print("📥 Webhook recibido")
+
+        data = request.get_json(silent=True)
+        print(f"🧾 JSON parseado: {data}")
+
         # Intentar interpretar como JSON
         data = request.get_json(silent=True)
         if data and isinstance(data, dict):
