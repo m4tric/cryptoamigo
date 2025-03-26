@@ -61,7 +61,7 @@ def place_order(symbol, side, qty, sl=None, tp=None):
     body = {
         "category": "linear",
         "symbol": symbol,
-        "side": side,
+        "side": side.upper(),  # 👈 AQUÍ es donde se convierte correctamente
         "orderType": "Market",
         "qty": str(qty),
         "timeInForce": "GoodTillCancel"
