@@ -59,9 +59,9 @@ def place_order(symbol, side, qty, sl=None, tp=None):
     url = BASE_URL + endpoint
 
     body = {
-        "category": "linear",
-        "symbol": symbol,
-        "side": side.upper(),  # 👈 AQUÍ es donde se convierte correctamente
+        "category": "linear",               # ← para contratos USDT Perpetuos
+        "symbol": symbol,                  # ← ej. BTCUSDT
+        "side": side.upper(),              # ← "BUY" o "SELL" en mayúsculas
         "orderType": "Market",
         "qty": str(qty),
         "timeInForce": "GoodTillCancel"
@@ -69,17 +69,21 @@ def place_order(symbol, side, qty, sl=None, tp=None):
 
     if tp is not None:
         body["takeProfit"] = str(tp)
+
     if sl is not None:
         body["stopLoss"] = str(sl)
 
+    # Convertir cuerpo a JSON string y preparar headers
     body_str = json.dumps(body, separators=(',', ':'))
     headers = _get_headers(body_str=body_str)
 
+    # Logs antes de enviar
     print("📤 Enviando orden a Bybit:")
     print(json.dumps(body, indent=2))
 
     response = requests.post(url, headers=headers, data=body_str)
 
+    # Logs de la respuesta
     print(f"📥 Código de respuesta: {response.status_code}")
     print("🧾 Respuesta cruda:", response.text)
 
