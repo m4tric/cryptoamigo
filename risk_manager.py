@@ -25,6 +25,17 @@ def calculate_qty(entry_price, capital, risk_percent, sl_percent):
     qty = risk_amount / sl_amount_per_unit
     return round(qty, 3)
 
+def get_trade_size(symbol, leverage):
+    config = load_config()
+    capital = config.get("capital_usdt", 20)
+    risk_percent = config.get("risk_percent", 5)
+
+    # Precio estimado temporal mientras no se obtiene el real
+    price = 100
+
+    qty = calculate_qty(entry_price=price, capital=capital, risk_percent=risk_percent, sl_percent=1)
+    return round(qty * leverage, 3)
+
 def can_trade():
     config = load_config()
     state = load_state()
@@ -45,14 +56,3 @@ def update_state(profit_loss):
 
 def reset_daily_state():
     save_state({"trades_today": 0, "daily_loss": 0})
-
-def get_trade_size(symbol, leverage):
-    # Ejemplo: cálculo básico de tamaño de operación
-    from config import config  # o importa lo que necesites
-
-    capital = config.get("capital_usdt", 500)
-    risk_pct = config.get("risk_percent", 1)
-    risk_usdt = (capital * risk_pct) / 100
-    qty = (risk_usdt * leverage) / 100  # Suponiendo precio ≈ 100 USD
-
-    return round(qty, 3)
