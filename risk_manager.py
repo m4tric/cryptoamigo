@@ -45,3 +45,14 @@ def update_state(profit_loss):
 
 def reset_daily_state():
     save_state({"trades_today": 0, "daily_loss": 0})
+
+def get_trade_size(symbol, leverage):
+    # Ejemplo: cálculo básico de tamaño de operación
+    from config import config  # o importa lo que necesites
+
+    capital = config.get("capital_usdt", 500)
+    risk_pct = config.get("risk_percent", 1)
+    risk_usdt = (capital * risk_pct) / 100
+    qty = (risk_usdt * leverage) / 100  # Suponiendo precio ≈ 100 USD
+
+    return round(qty, 3)
