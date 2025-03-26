@@ -54,23 +54,26 @@ def set_leverage(symbol, leverage):
     log_event(f"📈 SET LEVERAGE RESPONSE: {response.text}")
     return response.json()
 
-def place_order(symbol, side, qty, sl, tp):
+def place_order(symbol, side, qty, sl=None, tp=None):
     endpoint = "/v5/order/create"
     url = BASE_URL + endpoint
+
     body = {
         "category": "linear",
         "symbol": symbol,
         "side": side,
         "orderType": "Market",
         "qty": str(qty),
-        "timeInForce": "GoodTillCancel",
-        "takeProfit": str(tp),
-        "stopLoss": str(sl),
-        "positionIdx": 0
+        "timeInForce": "GoodTillCancel"
     }
+
+    if tp is not None:
+        body["takeProfit"] = str(tp)
+    if sl is not None:
+        body["stopLoss"] = str(sl)
+
     body_str = json.dumps(body, separators=(',', ':'))
     headers = _get_headers(body_str=body_str)
     response = requests.post(url, headers=headers, data=body_str)
-    log_event(f"📤 ORDER SENT: {body_str}")
-    log_event(f"📥 BYBIT RESPONSE: {response.text}")
+    log_event(f"📈 ORDER RESPONSE: {response.text}")
     return response.json()
