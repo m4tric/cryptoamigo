@@ -55,7 +55,7 @@ def set_leverage(symbol, leverage):
     return response.json()
 
 def place_order(symbol, side, qty, sl=None, tp=None):
-    endpoint = "/v6/order/create"
+    endpoint = "/v5/order/create"
     url = BASE_URL + endpoint
 
     body = {
