@@ -54,7 +54,7 @@ def set_leverage(symbol, leverage):
     log_event(f"📈 set leverage response: {response.text}")
     return response.json()
 
-def place_order(symbol, side, qty, sl=None, tp=None):
+def place_order(symbol, side, qty, entry_price, sl=None, tp=None):
     endpoint = "/v5/order/create"
     url = BASE_URL + endpoint
 
@@ -68,10 +68,12 @@ def place_order(symbol, side, qty, sl=None, tp=None):
     }
 
     if tp is not None:
-        body["takeProfit"] = str(tp)
+        tp_price = round(entry_price * (1 + tp / 100), 5) if side.lower() == "buy" else round(entry_price * (1 - tp / 100), 5)
+        body["takeProfit"] = str(tp_price)
 
     if sl is not None:
-        body["stopLoss"] = str(sl)
+        sl_price = round(entry_price * (1 - sl / 100), 5) if side.lower() == "buy" else round(entry_price * (1 + sl / 100), 5)
+        body["stopLoss"] = str(sl_price)
 
     body_str = json.dumps(body, separators=(',', ':'))
     headers = _get_headers(body_str=body_str)
