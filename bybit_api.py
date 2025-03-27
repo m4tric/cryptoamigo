@@ -55,6 +55,15 @@ def set_leverage(symbol, leverage):
     return response.json()
 
 def place_order(symbol, side, qty, entry_price, sl=None, tp=None):
+    # Si la señal incluye qty_override, usar ese valor manualmente
+    try:
+        qty_override = float(os.getenv("QTY_OVERRIDE", "0"))
+        if qty_override > 0:
+            log_event(f"🚨 OVERRIDE: usando qty fija: {qty_override}")
+            qty = qty_override
+    except Exception as e:
+        log_event(f"❌ Error al interpretar QTY_OVERRIDE: {str(e)}")
+
     log_event(f"📊 QTY CALCULADA: {qty}")
 
     endpoint = "/v5/order/create"
